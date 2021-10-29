@@ -41,19 +41,19 @@ app.post("/add", upload.single("file"), async (req, res) => {
     const createdAt = new Date();
     const imgsrc = process.env.SERVER_URL + req.file.path;
     connection.getConnection((error, tempConnection) => {
-      if (!!error) {
-        tempConnection.release();
+      if (error) {
+        tempConnection.end();
         console.log(error);
       } else {
         console.log("connection succesful");
         let sql = `SELECT * FROM new_user WHERE mobile=${mobile}`;
         tempConnection.query(sql, (error, row, fields) => {
-          if (!!error) {
-            tempConnection.release();
+          if (error) {
+            tempConnection.end();
             console.log(error);
           } else {
             if (row.length > 0) {
-              tempConnection.release();
+              tempConnection.end();
               res.json({ message: "User Already Exists", code: 2 });
             } else {
               sql = "INSERT INTO new_user SET ?";
@@ -61,8 +61,8 @@ app.post("/add", upload.single("file"), async (req, res) => {
                 sql,
                 { name, mobile, url: imgsrc, createdAt },
                 (error, result) => {
-                  if (!!error) {
-                    tempConnection.release();
+                  if (error) {
+                    tempConnection.end();
                     console.log(error);
                   } else {
                     res.json({
@@ -86,15 +86,15 @@ app.post("/add", upload.single("file"), async (req, res) => {
 app.get("/users", async (req, res) => {
   try {
     connection.getConnection((error, tempConnection) => {
-      if (!!error) {
-        tempConnection.release();
+      if (error) {
+        tempConnection.end();
         console.log(error);
       } else {
         console.log("connection succesful");
         let sql = "SELECT * FROM new_user";
         tempConnection.query(sql, (error, row) => {
-          if (!!error) {
-            tempConnection.release();
+          if (error) {
+            tempConnection.end();
             console.log(error);
           } else {
             res.json(row);
@@ -112,15 +112,15 @@ app.get("/get-user/:mobile", async (req, res) => {
   try {
     const { mobile } = req.params;
     connection.getConnection((error, tempConnection) => {
-      if (!!error) {
-        tempConnection.release();
+      if (error) {
+        tempConnection.end();
         console.log(error);
       } else {
         console.log("connection succesful");
         let sql = `SELECT * FROM new_user WHERE mobile=${mobile}`;
         tempConnection.query(sql, (error, row) => {
-          if (!!error) {
-            tempConnection.release();
+          if (error) {
+            tempConnection.end();
             console.log(error);
           } else {
             if (row.length < 1) {
@@ -145,15 +145,15 @@ app.get("/count", async (req, res) => {
   try {
     console.log("hi");
     connection.getConnection((error, tempConnection) => {
-      if (!!error) {
-        tempConnection.release();
+      if (error) {
+        tempConnection.end();
         console.log(error);
       } else {
         console.log("connection succesful");
         let sql = "SELECT COUNT(*) FROM new_user";
         tempConnection.query(sql, (error, result) => {
-          if (!!error) {
-            tempConnection.release();
+          if (error) {
+            tempConnection.end();
             console.log(error);
           } else {
             res.json({ count: result[0]["COUNT(*)"] });
